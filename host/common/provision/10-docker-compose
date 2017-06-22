@@ -23,7 +23,7 @@ After=docker.service
 [Service]
 Restart=always
 
-WorkingDirectory=/opt/workbench/repices/%i
+WorkingDirectory=/opt/workbench/workbench-recipes/%i
 
 # Remove old containers, images and volumes
 ExecStartPre=/usr/local/bin/docker-compose down -v
