@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+import subprocess
 import click
 
 import helper
@@ -12,9 +13,9 @@ class Context(object):
     def __init__(self):
         self.verbose = False
         self.home = os.getcwd()
-        self.local_data = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog")
-        self.recipes_dir = os.path.join(self.local_data, "workbench-recipes")
+        self.recipes_dir = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog", "workbench-recipes")
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
+        self.state_path = os.path.join(self.local_config, "state.json")
 
         # cache loading
         self.cache_file = os.path.join(self.local_config, "recipes_cache.json")
@@ -23,6 +24,14 @@ class Context(object):
     def vlog(self, msg):
         if self.verbose:
             click.echo(msg)
+
+    def fail(self, msg):
+        click.echo(msg, file=sys.stderr)
+        sys.exit(1)
+
+    def sh(self, cmd):
+        self.vlog(cmd)
+        subprocess.check_call(cmd, shell=True)
 
 pass_context = click.make_pass_decorator(Context, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
