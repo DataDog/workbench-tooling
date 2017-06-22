@@ -1,5 +1,5 @@
 import click
-from cli import pass_context
+from cli.cli import pass_context
 
 
 @click.command('info', short_help='info')

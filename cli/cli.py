@@ -1,7 +1,9 @@
-import click
 import os
 import sys
+import click
 
+
+CONTEXT_SETTINGS = dict(auto_envvar_prefix='WORKBENCH')
 
 class Context(object):
 
@@ -26,15 +28,15 @@ class ComplexCLI(click.MultiCommand):
         try:
             if sys.version_info[0] == 2:
                 name = name.encode('ascii', 'replace')
-            mod = __import__('commands.' + name, None, None, ['cli'])
+            mod = __import__('cli.commands.' + name, None, None, ['cli'])
         except ImportError as e:
             return
         return mod.cli
 
 @click.command(cls=ComplexCLI)
+@click.option('-v', '--verbose', is_flag=True,
+                      help='Enables verbose mode.')
 @pass_context
-def cli(ctx):
-    pass
-
-if __name__ == "__main__":
-    cli()
+def cli(ctx, verbose):
+    """ main CLI for workbench """
+    ctx.verbose = verbose

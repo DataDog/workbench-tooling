@@ -10,3 +10,13 @@ This repo holds the tooling for the `Datadog workbench` project. This project ai
 
 
 Recipes are stored in the workbench-recipes repo
+
+# Test the CLI
+
+```
+$ mkdir venv
+$ virtualenv venv
+$ . ./venv/bin/activate
+$ pip install .
+$ workbench --help
+```
