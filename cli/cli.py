@@ -1,4 +1,5 @@
 import os
+import json
 import sys
 import click
 
@@ -11,8 +12,20 @@ class Context(object):
         self.verbose = False
         self.home = os.getcwd()
         self.local_data = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog")
-        self.config_dir = os.path.join(os.path.expanduser("~"), ".config", "workbench-tooling/")
-        self.recipes_dir = self.local_data + "workbench-recipes/"
+        self.recipes_dir = os.path.join(self.local_data, "workbench-recipes")
+        self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
+
+        cache_file = os.path.join(self.local_config, "recipes_cache.json")
+        if not os.path.exists(cache_file):
+            # we should generate the cache here
+            pass
+
+        with open(cache_file) as f:
+            self.recipes_cache = json.load(f)
+
+    def vlog(self, msg):
+        if self.verbose:
+            click.echo(msg)
 
 pass_context = click.make_pass_decorator(Context, ensure=True)
 cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
