@@ -19,7 +19,7 @@ def cli(ctx):
     if not os.path.exists(os.path.join(target_dir, ".git")):
         click.echo('cloning workbench-recipes to %s' % target_dir)
         os.makedirs(target_dir)
-        git.Repo.clone_from("git@github.com:DataDog/workbench-recipes.git", target_dir)
+        git.Repo.clone_from("https://github.com/DataDog/workbench-recipes.git", target_dir)
     else:
         click.echo('pulling latest changes from workbench-recipes')
         click.echo(git.cmd.Git(target_dir).pull())
