@@ -1,6 +1,0 @@
-#!/bin/bash
-set -euo pipefail
-IFS=$'\n\t'
-
-cd /opt/workbench
-git clone https://github.com/DataDog/workbench-recipes.git
