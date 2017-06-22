@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# Link the common / distro / perso profile.sh files into /etc/profile.d
+
+ln -s /opt/workbench/host/common/profile.sh /etc/profile.d/dockerbox-1-common.sh
+ln -s /opt/workbench/host/ubuntu_1604/profile.sh /etc/profile.d/dockerbox-2-distro.sh
+#ln -s /opt/workbench/personal/profile.sh /etc/profile.d/dockerbox-3-perso.sh

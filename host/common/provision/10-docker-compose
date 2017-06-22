@@ -1,0 +1,45 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# Install docker compose from the binary distribution
+# See https://docs.docker.com/compose/install/#alternative-install-options
+
+curl -sL https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose > /dev/null 2>&1
+chmod +x /usr/local/bin/docker-compose
+
+# Install bash completion file
+
+curl -L https://raw.githubusercontent.com/docker/compose/$(docker-compose version --short)/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose > /dev/null 2>&1
+
+# Install systemd unit to start a compose via `systemctl start docker-compose@$name
+
+cat <<EOF > /etc/systemd/system/docker-compose@.service
+[Unit]
+Description=%i service with docker compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+
+WorkingDirectory=/opt/workbench/repices/%i
+
+# Remove old containers, images and volumes
+ExecStartPre=/usr/local/bin/docker-compose down -v
+ExecStartPre=/usr/local/bin/docker-compose rm -fv
+ExecStartPre=-/bin/bash -c 'docker volume ls -qf "name=%i_" | xargs docker volume rm'
+ExecStartPre=-/bin/bash -c 'docker network ls -qf "name=%i_" | xargs docker network rm'
+ExecStartPre=-/bin/bash -c 'docker ps -aqf "name=%i_*" | xargs docker rm'
+
+# Compose up
+ExecStart=/usr/local/bin/docker-compose up
+
+# Compose down, remove containers and volumes
+ExecStop=/usr/local/bin/docker-compose down -v
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload > /dev/null

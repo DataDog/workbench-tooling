@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# Run apt-get update once so all other apt-get invocations don't need to
+
+apt-get update > /dev/null

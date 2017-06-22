@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# Install python2 with pip and virtualenv modules
+
+apt-get install -y python python-pip python-virtualenv > /dev/null
