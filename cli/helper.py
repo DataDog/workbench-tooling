@@ -62,10 +62,12 @@ class State(object):
                 return {'running': {}}
 
     @staticmethod
-    def add_running_compose(ctx, recipe_id, compose_file):
+    def add_running_compose(ctx, recipe_id, compose_file, options):
+        entry = {'compose_file': compose_file, 'options': options}
+
         if not os.path.exists(ctx.state_path):
             with open(ctx.state_path, 'w+') as f:
-                json.dump({'running': {recipe_id: compose_file}}, f)
+                json.dump({'running': {recipe_id: entry}}, f)
                 return
 
         data = State.get_state(ctx)
@@ -73,7 +75,7 @@ class State(object):
             f.truncate()
             if 'running' not in data:
                 data['running'] = {}
-            data['running'][recipe_id] = compose_file
+            data['running'][recipe_id] = entry
             json.dump(data, f)
 
     @staticmethod

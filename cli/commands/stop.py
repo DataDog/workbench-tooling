@@ -14,14 +14,14 @@ def cli(ctx, recipe_ids, a):
         ctx.fail("No recipes are running")
 
     if a:
-        for recipe_id, compose_file in state['running'].iteritems():
-            ctx.sh("docker-compose -f %s down" % compose_file)
+        for recipe_id, info in state['running'].iteritems():
+            ctx.sh("%s docker-compose -f %s down" % (info['options'], info['compose_file']))
             State.remove_running_compose(ctx, recipe_id)
         return
 
     if not recipe_ids:
         click.echo("At least one recipe_id is needed.\n")
-        click.echo("running recipe: %s" % "\n- ".join(state['running'].keys()))
+        click.echo("running recipe:\n- %s" % "\n- ".join(state['running'].keys()))
         return
 
     for recipe_id in recipe_ids:

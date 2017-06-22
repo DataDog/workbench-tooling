@@ -16,7 +16,7 @@ def cli(ctx, recipe_name, flavor_name, filters):
             ctx.fail("bad filter format '%s', right one is 'key=value'" % f)
         k, v = f.split("=", 1)
         search[k] = v
-    docker_cmd_env = " ".join(filters)
+    env = " ".join(filters)
     recipe_id = "%s:%s" % (recipe_name, flavor_name)
 
     for manifest_path, manifest in ctx.recipes_cache.iteritems():
@@ -41,9 +41,9 @@ def cli(ctx, recipe_name, flavor_name, filters):
             if State.is_running(ctx, recipe_id):
                 ctx.fail("Recipe for %s is already running" % recipe_id)
 
-            cmd = "%s docker-compose -f %s up -d" % (docker_cmd_env, docker_compose_file)
+            cmd = "%s docker-compose -f %s up -d" % (env, docker_compose_file)
 
             ctx.sh(cmd)
-            State.add_running_compose(ctx, recipe_id, docker_compose_file)
+            State.add_running_compose(ctx, recipe_id, docker_compose_file, env)
             return
     print "No recipe found matching the filter"
