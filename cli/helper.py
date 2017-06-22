@@ -1,6 +1,8 @@
 # Helper functions for workbench
 import os
 import yaml
+import json
+import click
 
 # File management
 def read_yamls(path):
@@ -24,3 +26,23 @@ def read_yamls(path):
         print("ERROR while listing integrations: {0}:".format(err))
     return yamls
 
+def generate_cache(ctx):
+    """Generate integration cache from yamls"""
+    click.echo("Generating cache...")
+    try: 
+        if not os.path.isdir(os.path.dirname(ctx.cache_file)):
+            os.makedirs(os.path.dirname(ctx.cache_file))
+        with open(ctx.cache_file, 'w') as stream:
+            stream.write(json.dumps(read_yamls(ctx.recipes_dir)))
+    except Exception as e:
+        print("ERROR writing cache file {0}".format(e))
+
+def load_cache(ctx):
+    if not os.path.exists(ctx.cache_file):
+        generate_cache(ctx)
+    try:
+        with open(ctx.cache_file) as f:
+            recipes_cache = json.load(f)
+        return(recipes_cache)
+    except Exception as e:
+        print("ERROR while loading cache {0}".format(e))

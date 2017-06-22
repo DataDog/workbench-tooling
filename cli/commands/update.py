@@ -4,6 +4,7 @@ import click
 import git
 
 from cli.cli import pass_context
+from cli import helper
 
 
 @click.command('update', short_help='Update/Initializes the local clone of workbench-recipes')
@@ -21,3 +22,6 @@ def cli(ctx):
     else:
         click.echo('pulling latest changes from workbench-recipes')
         click.echo(git.cmd.Git(ctx.recipes_dir).pull())
+
+    # Regenerate cache
+    helper.generate_cache(ctx)

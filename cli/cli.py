@@ -3,6 +3,7 @@ import json
 import sys
 import click
 
+import helper
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='WORKBENCH')
 
@@ -15,13 +16,9 @@ class Context(object):
         self.recipes_dir = os.path.join(self.local_data, "workbench-recipes")
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
 
-        cache_file = os.path.join(self.local_config, "recipes_cache.json")
-        if not os.path.exists(cache_file):
-            # we should generate the cache here
-            pass
-
-        with open(cache_file) as f:
-            self.recipes_cache = json.load(f)
+        # cache loading
+        self.cache_file = os.path.join(self.local_config, "recipes_cache.json")
+        self.recipes_cache = helper.load_cache(self)
 
     def vlog(self, msg):
         if self.verbose:
