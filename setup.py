@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'click',
         'GitPython',
+        'pyyaml',
     ],
     entry_points='''
         [console_scripts]
