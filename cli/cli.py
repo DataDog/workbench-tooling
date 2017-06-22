@@ -30,6 +30,10 @@ class ComplexCLI(click.MultiCommand):
                 name = name.encode('ascii', 'replace')
             mod = __import__('cli.commands.' + name, None, None, ['cli'])
         except ImportError as e:
+            print "Error loading %s: %s" % (name, e)
+            return
+        except Excetion as e:
+            print "Invalid import of %s: %s" % (name, e)
             return
         return mod.cli
 
