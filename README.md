@@ -1,9 +1,12 @@
-This folder holds the host Vagrantfiles you can use to host the containers.
+# DATADOG HACKATHLON PROJECT
 
-If you already have a Linux host with docker setup, you could directly use the compose repices without starting a vagrant. Requirements are:
+# Datadog workbench tooling
 
-- docker
-- python2 with pip and virtualenv
-- source the common and personal profile.sh files
+This repo holds the tooling for the `Datadog workbench` project. This project aims at enabling all teams to easily work with containerized software.
 
-common hosts the common provisionners and tools
+# Repository structure
+
+- host is for host systems (vagrants / terraform / ...)
+
+
+Recipes are stored in the workbench-recipes repo
