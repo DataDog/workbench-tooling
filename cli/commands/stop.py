@@ -20,7 +20,7 @@ def cli(ctx, recipe_ids, a):
         return
 
     if not recipe_ids:
-        click.echo("At least one recipe_id is needed.\n")
+        click.echo("Provide at least one recipe_id or use '-a' option.\n")
         click.echo("running recipe:\n- %s" % "\n- ".join(s['running'].keys()))
         return
 
