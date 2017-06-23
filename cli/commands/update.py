@@ -18,7 +18,7 @@ def cli(ctx):
     """
     s = state.get(ctx)
     if len(s['running']) > 0:
-        ctx.fail("Some recipes are running, please stop then before running an update")
+        ctx.fail("Some recipes are running, please stop them before running an update")
 
     if not os.path.exists(os.path.join(ctx.recipes_dir, ".git")):
         click.echo('cloning workbench-recipes to %s' % ctx.recipes_dir)
