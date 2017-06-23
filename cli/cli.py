@@ -16,7 +16,8 @@ class Context(object):
         self.home = os.getcwd()
         self.recipes_dir = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog", "workbench-recipes")
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
-        self.auto_conf_dir = os.path.join(self.local_config, "conf.d", "auto_conf")
+        self.conf_d_dir = os.path.join(self.local_config, "conf.d")
+        self.auto_conf_dir = os.path.join(self.conf_d_dir, "auto_conf")
 
         for path in (self.auto_conf_dir, self.recipes_dir):
             try:

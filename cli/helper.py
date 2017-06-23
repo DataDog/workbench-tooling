@@ -13,10 +13,10 @@ def read_yamls(path):
         for root, dirs, files in os.walk(path):
             for name in files:
                 if name.endswith(("manifest.yaml", ".yml")):
-                    with open(root + '/' + name) as stream:
+                    with open(os.path.join(root, name)) as stream:
                         try:
                             integration_yaml = yaml.load(stream)
-                            yamls[integration_yaml["name"]] = integration_yaml
+                            yamls[root] = integration_yaml
                         except yaml.YAMLError as e:
                             print('Error in YAML file: {0}'.format(e))
                             raise

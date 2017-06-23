@@ -2,6 +2,7 @@ import click
 import os
 from cli.cli import pass_context
 from cli import state
+from cli import setting
 
 
 @click.command('run', short_help='Run a recipe')
@@ -20,6 +21,7 @@ def cli(ctx, recipe_name, flavor_name, filters):
     if state.is_running(ctx, recipe_id):
         ctx.fail("Recipe for %s is already running" % recipe_id)
 
+    settings = setting.get(ctx)
     env = {}
 
     for manifest_path, manifest in ctx.recipes_cache.iteritems():
@@ -32,21 +34,33 @@ def cli(ctx, recipe_name, flavor_name, filters):
                 ctx.vlog("Searching for flavor named '%s': ignoring flavor '%s'" % (flavor_name, name))
                 continue
 
-            if "options" in flavor:
-                for name, option in flavor['options'].iteritems():
-                    if 'default' in option:
-                        env[name] = option['default']
+            for name, option in flavor.get('options', {}).iteritems():
+                if 'default' in option:
+                    env[name] = option['default']
 
-                for option, value in  search.iteritems():
-                    if option in flavor['options']:
-                        if not value in flavor['options'][option]['values']:
-                            ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
-                        env[option] = value
-                    else:
-                        ctx.fail("option '%s' does not exist in recipe %s" % (option, recipe_id))
+            for name, required in flavor.get('settings', {}).iteritems():
+
+                # hack: we should merge ctx info and setting somehow
+                if name == 'conf_d_path':
+                    env['conf_d_path'] = ctx.conf_d_dir
+                    continue
+
+                if name not in settings and required:
+                    ctx.fail("Error setting '%s' is required to run %s. See command 'set_conf'." % (name, recipe_id))
+                value = settings.get(name)
+                if value:
+                    env[name] = value
+
+            for option, value in  search.iteritems():
+                if option in flavor.get('options', {}):
+                    if not value in flavor['options'][option]['values']:
+                        ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
+                    env[option] = value
+                else:
+                    ctx.fail("option '%s' does not exist in recipe %s" % (option, recipe_id))
 
             env_string = ' '.join(['='.join([k,v]) for k, v in env.iteritems()])
-            docker_compose_file = os.path.join(ctx.recipes_dir, manifest_path, flavor['compose_file'])
+            docker_compose_file = os.path.join(manifest_path, flavor['compose_file'])
 
             cmd = "%s docker-compose -f %s up -d" % (env_string, docker_compose_file)
 
