@@ -29,5 +29,5 @@ def cli(ctx, recipe_ids, a):
             ctx.fail("%s is not running" % recipe_id)
 
         info = s['running'][recipe_id]
-        ctx.sh("%s docker-compose -f %s down" % (info['options'], info['compose_file']))
+        ctx.sh("%s docker-compose -f %s down -v" % (info['options'], info['compose_file']))
         state.remove_running_compose(ctx, recipe_id)
