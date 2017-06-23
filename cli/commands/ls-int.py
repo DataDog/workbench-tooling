@@ -21,7 +21,7 @@ def cli(ctx, integrations):
                             for option_name, option in flavor["options"].iteritems():
                                 click.echo('    ' + option_name + "s: " + str(option["values"]))
                     except Exception as e:
-                        print("ERROR while parsing config for integration {0}: {1}".format(integration, e))
+                        ctx.fail("ERROR while parsing config for integration {0}: {1}".format(integration, e))
     else:
         for int_yaml_name, int_yaml in ctx.recipes_cache.iteritems():
             click.echo(int_yaml["name"])

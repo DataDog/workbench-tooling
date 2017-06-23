@@ -12,4 +12,7 @@ from cli.cli import pass_context
 #@click.option('--tty', '-t', default=False)
 @pass_context
 def cli(ctx, container_id, command, arguments):
-    ctx.sh("docker exec -it {0} {1} {2}".format(container_id, command, " ".join(arguments)))
+    try:
+        ctx.sh("docker exec -it {0} {1} {2}".format(container_id, command, " ".join(arguments)))
+    except Exception as e:
+        ctx.fail("ERROR while docker exec: {0}".format(e))

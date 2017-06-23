@@ -18,13 +18,13 @@ def read_yamls(path):
                             integration_yaml = yaml.load(stream)
                             yamls[root] = integration_yaml
                         except yaml.YAMLError as e:
-                            print('Error in YAML file: {0}'.format(e))
+                            click.echo('Error in YAML file: {0}'.format(e))
                             raise
                         except Exception as e:
-                            print('Error while parsing the YAML: {0}'.format(e))
+                            click.echo('Error while parsing the YAML: {0}'.format(e))
                             raise
     except os.error as err:
-        print("ERROR while listing integrations: {0}:".format(err))
+        click.echo("ERROR while listing integrations: {0}:".format(err))
     return yamls
 
 def update_auto_confs(ctx):
@@ -50,7 +50,7 @@ def generate_cache(ctx):
         with open(ctx.cache_file, 'w') as stream:
             stream.write(json.dumps(read_yamls(ctx.recipes_dir)))
     except Exception as e:
-        print("ERROR writing cache file {0}".format(e))
+        ctx.fail("ERROR writing cache file {0}".format(e))
 
 def load_cache(ctx):
     if not os.path.exists(ctx.cache_file):
@@ -60,5 +60,5 @@ def load_cache(ctx):
             recipes_cache = json.load(f)
         return(recipes_cache)
     except Exception as e:
-        print("ERROR while loading cache {0}".format(e))
+        ctx.fail("ERROR while loading cache {0}".format(e))
 
