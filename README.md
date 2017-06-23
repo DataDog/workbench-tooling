@@ -1,27 +1,17 @@
-# DATADOG HACKATHLON PROJECT
+# ONGOING DATADOG HACKATHLON PROJECT
 
-# Datadog workbench tooling
+# Datadog Integration Workbench tooling
 
-This repo holds the tooling for the `Datadog workbench` project. This project aims at enabling all teams to easily work with containerized software.
+This repo holds the tooling for the `Integration Workbench` project. This project aims at enabling all teams to easily work with containerized software and the agent.
 
-# Repository structure
+Recipes are stored in the [workbench-recipes](https://github.com/DataDog/workbench-recipes/) repo
 
-- host is for host systems (vagrants / terraform / ...)
+# How to use it
 
+## Standard vagrant environment
 
-Recipes are stored in the workbench-recipes repo
+`cd host/ubuntu_1604/ && vagrant up && vagrant ssh`
 
-# Test the CLI
+## Install the CLI on a linux system
 
-```
-$ mkdir venv
-$ virtualenv venv
-$ . ./venv/bin/activate
-$ pip install .
-$ workbench --help
-```
-
-# Add bash auto-complete to CLI
-```bash
-source workbench-complete.sh
-```
+See [the cli folder](cli/) 
