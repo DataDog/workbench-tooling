@@ -2,6 +2,7 @@
 import os
 import yaml
 import json
+import shutil
 import click
 
 # File management
@@ -25,6 +26,20 @@ def read_yamls(path):
     except os.error as err:
         print("ERROR while listing integrations: {0}:".format(err))
     return yamls
+
+def update_auto_confs(ctx):
+    """
+        Search recursively for every auto_conf directory copy them in the master auto_conf_dir.
+
+        auto_conf_dir will be mount in the agent container and use by AutoConf.
+    """
+    for root, dirs, files in os.walk(ctx.recipes_dir):
+        if root.endswith("auto_conf"):
+            ctx.vlog("found auto_conf dir: %s" % root)
+            for f in files:
+                ctx.vlog("importing auto_conf: %s" % f)
+                shutil.copyfile(os.path.join(root, f), os.path.join(ctx.auto_conf_dir, f))
+
 
 def generate_cache(ctx):
     """Generate integration cache from yamls"""
