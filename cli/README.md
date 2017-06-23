@@ -3,15 +3,16 @@
 - run `$ pip install .`   
   (optionally in a venv by running `mkdir venv && virtualenv venv && . venv/bin/activate`. use then `deactivate` to exit venv)
 - run `$ workbench update`
+- run `$ workbench` for usage help
 
 # Usage
 
 ```
-$ workbench ls-int
+$ workbench ls
 mongodb
 elasticsearch
 
-$ workbench ls-int mongodb
+$ workbench ls mongodb
 mongodb
   replicas3:  3 mongo replicaset with dummy data
     versions: [u'3.0', u'3.2', u'3.4', u'3.5']
