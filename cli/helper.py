@@ -6,13 +6,13 @@ import shutil
 import click
 
 # File management
-def read_yamls(path):
+def read_yamls(path, endswith=".yaml"):
     """Read recursively all yaml files in directory path and returns a dictionnary"""
     yamls = {}
     try:
         for root, dirs, files in os.walk(path):
             for name in files:
-                if name.endswith(("manifest.yaml", ".yml")):
+                if name.endswith(endswith):
                     with open(os.path.join(root, name)) as stream:
                         try:
                             integration_yaml = yaml.load(stream)
@@ -48,7 +48,7 @@ def generate_cache(ctx):
         if not os.path.isdir(os.path.dirname(ctx.cache_file)):
             os.makedirs(os.path.dirname(ctx.cache_file))
         with open(ctx.cache_file, 'w') as stream:
-            stream.write(json.dumps(read_yamls(ctx.recipes_dir)))
+            stream.write(json.dumps(read_yamls(ctx.recipes_dir, "manifest.yaml")))
     except Exception as e:
         ctx.fail("ERROR writing cache file {0}".format(e))
 
