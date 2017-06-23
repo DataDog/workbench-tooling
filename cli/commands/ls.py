@@ -3,7 +3,7 @@ import click
 from cli import helper
 from cli.cli import pass_context
 
-@click.command('ls-int', short_help='list available integrations')
+@click.command('ls', short_help='list available integrations')
 @click.argument('integrations',nargs= -1)
 @pass_context
 def cli(ctx, integrations):
