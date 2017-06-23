@@ -20,3 +20,8 @@ $ . ./venv/bin/activate
 $ pip install .
 $ workbench --help
 ```
+
+# Add bash auto-complete to CLI
+```bash
+source workbench-complete.sh
+```
