@@ -10,8 +10,9 @@ from cli.helper import State
 def cli(ctx, recipe_id, follow):
     state = State.get_state(ctx)
 
-    info = state['running'].get(recipe_id)
-    if not info:
-        ctx.fail("Recipe %s isn't running" % recipe_id)
+    if state:
+        info = state['running'].get(recipe_id)
+        if not info:
+            ctx.fail("Recipe %s isn't running" % recipe_id)
 
-    ctx.sh("%s docker-compose -f %s logs %s" % (info['options'], info['compose_file'], '-f' if follow else ''))
+        ctx.sh("%s docker-compose -f %s logs %s" % (info['options'], info['compose_file'], '-f' if follow else ''))
