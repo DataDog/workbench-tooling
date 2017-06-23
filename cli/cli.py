@@ -17,7 +17,6 @@ class Context(object):
         self.recipes_dir = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog", "workbench-recipes")
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
         self.auto_conf_dir = os.path.join(self.local_config, "conf.d", "auto_conf")
-        self.state_path = os.path.join(self.local_config, "state.json")
 
         for path in (self.auto_conf_dir, self.recipes_dir):
             try:
@@ -29,6 +28,22 @@ class Context(object):
 
         # cache loading
         self.cache_file = os.path.join(self.local_config, "recipes_cache.json")
+        self.setting_file = os.path.join(self.local_config, "setting.json")
+        self.state_file = os.path.join(self.local_config, "state.json")
+
+        # for now we initialize every internal file here
+        if not os.path.exists(self.cache_file):
+            with open(self.cache_file, "w") as f:
+                f.write("{}")
+
+        if not os.path.exists(self.state_file):
+            with open(self.state_file, "w") as f:
+                f.write('{"running": {}}')
+
+        if not os.path.exists(self.setting_file):
+            with open(self.setting_file, "w") as f:
+                f.write('{}')
+
         self.recipes_cache = helper.load_cache(self)
 
     def vlog(self, msg):

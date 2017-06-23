@@ -1,7 +1,7 @@
 import click
 import os
 from cli.cli import pass_context
-from cli.helper import State
+from cli import state
 
 
 @click.command('run', short_help='Run a recipe')
@@ -38,12 +38,17 @@ def cli(ctx, recipe_name, flavor_name, filters):
 
             docker_compose_file = os.path.join(ctx.recipes_dir, manifest_path, flavor['compose_file'])
 
-            if State.is_running(ctx, recipe_id):
+            if state.is_running(ctx, recipe_id):
                 ctx.fail("Recipe for %s is already running" % recipe_id)
 
             cmd = "%s docker-compose -f %s up -d" % (env, docker_compose_file)
 
+            # create common network in any case
+            try:
+                ctx.sh("docker network create workbench")
+            except:
+                pass
             ctx.sh(cmd)
-            State.add_running_compose(ctx, recipe_id, docker_compose_file, env)
+            state.add_running_compose(ctx, recipe_id, docker_compose_file, env)
             return
     print "No recipe found matching the filter"
