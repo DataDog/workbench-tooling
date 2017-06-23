@@ -25,8 +25,8 @@ def cli(ctx, recipe_ids, a):
         return
 
     for recipe_id in recipe_ids:
-        if recipe_id not in state['running']:
+        if recipe_id, info not in state['running'].iteritems():
             ctx.fail("%s is not running" % recipe_id)
 
-        ctx.sh("docker-compose -f %s down" % state['running'][recipe_id])
+        ctx.sh("%s docker-compose -f %s down" % (info['options'], info['compose_file']))
         State.remove_running_compose(ctx, recipe_id)
