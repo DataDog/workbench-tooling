@@ -2,6 +2,7 @@ import os
 import json
 import sys
 import subprocess
+import errno
 import click
 
 import helper
@@ -15,7 +16,16 @@ class Context(object):
         self.home = os.getcwd()
         self.recipes_dir = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog", "workbench-recipes")
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
+        self.auto_conf_dir = os.path.join(self.local_config, "conf.d", "auto_conf")
         self.state_path = os.path.join(self.local_config, "state.json")
+
+        for path in (self.auto_conf_dir, self.recipes_dir):
+            try:
+                os.makedirs(path)
+            except OSError as exc:
+                if exc.errno != errno.EEXIST:
+                    raise
+                pass
 
         # cache loading
         self.cache_file = os.path.join(self.local_config, "recipes_cache.json")

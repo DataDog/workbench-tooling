@@ -17,7 +17,6 @@ def cli(ctx):
     """
     if not os.path.exists(os.path.join(ctx.recipes_dir, ".git")):
         click.echo('cloning workbench-recipes to %s' % ctx.recipes_dir)
-        os.makedirs(ctx.recipes_dir)
         git.Repo.clone_from("https://github.com/DataDog/workbench-recipes.git", ctx.recipes_dir)
     else:
         click.echo('pulling latest changes from workbench-recipes')
@@ -25,3 +24,4 @@ def cli(ctx):
 
     # Regenerate cache
     helper.generate_cache(ctx)
+    helper.update_auto_confs(ctx)
