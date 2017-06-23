@@ -32,17 +32,18 @@ def cli(ctx, recipe_name, flavor_name, filters):
                 ctx.vlog("Searching for flavor named '%s': ignoring flavor '%s'" % (flavor_name, name))
                 continue
 
-            for name, option in flavor['options'].iteritems():
-                if 'default' in option:
-                    env[name] = option['default']
+            if "options" in flavor:
+                for name, option in flavor['options'].iteritems():
+                    if 'default' in option:
+                        env[name] = option['default']
 
-            for option, value in  search.iteritems():
-                if option in flavor['options']:
-                    if not value in flavor['options'][option]['values']:
-                        ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
-                    env[option] = value
-                else:
-                    ctx.fail("option '%s' does not exist in recipe %s" % (option, recipe_id))
+                for option, value in  search.iteritems():
+                    if option in flavor['options']:
+                        if not value in flavor['options'][option]['values']:
+                            ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
+                        env[option] = value
+                    else:
+                        ctx.fail("option '%s' does not exist in recipe %s" % (option, recipe_id))
 
             env_string = ' '.join(['='.join([k,v]) for k, v in env.iteritems()])
             docker_compose_file = os.path.join(ctx.recipes_dir, manifest_path, flavor['compose_file'])
