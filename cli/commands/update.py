@@ -5,6 +5,7 @@ import git
 
 from cli.cli import pass_context
 from cli import helper
+from cli.helper import State
 
 
 @click.command('update', short_help='Update/Initializes the local clone of workbench-recipes')
@@ -15,6 +16,10 @@ def cli(ctx):
 
     This will clone or pull the local clone of workbench-recipes and refresh caches
     """
+    state = State.get_state(ctx)
+    if state and len(state['running']) > 0:
+        ctx.fail("Some recipes are running, please stop then before running an update")
+
     if not os.path.exists(os.path.join(ctx.recipes_dir, ".git")):
         click.echo('cloning workbench-recipes to %s' % ctx.recipes_dir)
         git.Repo.clone_from("https://github.com/DataDog/workbench-recipes.git", ctx.recipes_dir)
