@@ -13,7 +13,7 @@ def cli(ctx, recipe_name, flavor_name, filters):
     search = {}
     for f in filters:
         if not "=" in f:
-            ctx.fail("bad filter format '%s', right one is 'key=value'" % f)
+            ctx.fail("'%s' should be set to a filter format 'key=value'" % f)
         k, v = f.split("=", 1)
         search[k] = v
     env = " ".join(filters)
