@@ -16,8 +16,11 @@ def cli(ctx, recipe_name, flavor_name, filters):
             ctx.fail("'%s' should be set to a filter format 'key=value'" % f)
         k, v = f.split("=", 1)
         search[k] = v
-    env = " ".join(filters)
     recipe_id = "%s:%s" % (recipe_name, flavor_name)
+    if state.is_running(ctx, recipe_id):
+        ctx.fail("Recipe for %s is already running" % recipe_id)
+
+    env = {}
 
     for manifest_path, manifest in ctx.recipes_cache.iteritems():
         if recipe_name != manifest['name']:
@@ -29,19 +32,22 @@ def cli(ctx, recipe_name, flavor_name, filters):
                 ctx.vlog("Searching for flavor named '%s': ignoring flavor '%s'" % (flavor_name, name))
                 continue
 
+            for name, option in flavor['options'].iteritems():
+                if 'default' in option:
+                    env[name] = option['default']
+
             for option, value in  search.iteritems():
                 if option in flavor['options']:
                     if not value in flavor['options'][option]['values']:
                         ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
+                    env[option] = value
                 else:
                     ctx.fail("option '%s' does not exist in recipe %s" % (option, recipe_id))
 
+            env_string = ' '.join(['='.join([k,v]) for k, v in env.iteritems()])
             docker_compose_file = os.path.join(ctx.recipes_dir, manifest_path, flavor['compose_file'])
 
-            if state.is_running(ctx, recipe_id):
-                ctx.fail("Recipe for %s is already running" % recipe_id)
-
-            cmd = "%s docker-compose -f %s up -d" % (env, docker_compose_file)
+            cmd = "%s docker-compose -f %s up -d" % (env_string, docker_compose_file)
 
             # create common network in any case
             try:
@@ -49,6 +55,6 @@ def cli(ctx, recipe_name, flavor_name, filters):
             except:
                 pass
             ctx.sh(cmd)
-            state.add_running_compose(ctx, recipe_id, docker_compose_file, env)
+            state.add_running_compose(ctx, recipe_id, docker_compose_file, env_string)
             return
     print "No recipe found matching the filter"
