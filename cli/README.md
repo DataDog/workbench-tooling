@@ -1,6 +1,6 @@
-# Install
+# Installation
 - make sure you have `python`, `python-pip`, `docker-compose` installed
-- run `$ pip install .` 
+- run `$ pip install .`   
   (optionally in a venv by running `mkdir venv && virtualenv venv && . venv/bin/activate`. use then `deactivate` to exit venv)
 - run `$ workbench update`
 
