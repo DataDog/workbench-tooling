@@ -21,7 +21,7 @@ def cli(ctx, recipe_name, flavor_name, filters):
 
     for manifest_path, manifest in ctx.recipes_cache.iteritems():
         if recipe_name != manifest['name']:
-            ctx.vlog("Searching for recipe named '%s': ignoring recipe '%s'" % (recipe_name, name))
+            ctx.vlog("Searching for recipe named '%s': ignoring recipe '%s'" % (recipe_name, manifest['name']))
             continue
 
         for name, flavor in manifest['flavors'].iteritems():
