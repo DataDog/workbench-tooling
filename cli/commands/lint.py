@@ -74,6 +74,9 @@ def cli(ctx):
                             click.echo('Error while parsing the YAML: {0}'.format(e))
     except os.error as err:
         click.echo("ERROR while reading yamls: {0}:".format(err))
+        checks_ok = False
 
     if checks_ok:
         click.echo("YAML files in workbench-recipes are formatted correctly!")
+    else:
+        raise click.Abort  # return error code for CI
