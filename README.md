@@ -5,7 +5,7 @@ easily work with agent integrations; for development, testing, support or demos.
 
 Recipes are stored in the [workbench-recipes](https://github.com/DataDog/workbench-recipes/) repo
 
-# Scope of the project
+# Scope and status of the project
 
 This umbrella project includes:
   - turn-key [recipes](https://github.com/DataDog/workbench-recipes) to run the software our agent integrates with
@@ -20,6 +20,17 @@ We chose to go with docker and docker-compose for several reasons:
    our maintenance effort
   - relying on the [autodiscovery](http://docs.datadoghq.com/guides/autodiscovery/) feature of the Datadog Agent
   allows for an easier setup workflow
+
+As we bootstraped this project during a hackathlon, it now needs some more love to be release-ready:
+  - the cli codebase needs polishing:
+    - better cache/settings handling
+    - advanced bash-autocompletion
+    - agent-on-host install
+    - switch agent in dev mode (hotpatch code, restart collector, manually run a check)
+    - better recipe linting
+    - ... any feature to deem useful
+  - we need more hosts (Debian, CentOS, CoreOS...) and Terraform provisionners
+  - we need more [recipes](https://github.com/DataDog/workbench-recipes/)
 
 # How to use it
 
