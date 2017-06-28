@@ -3,4 +3,4 @@ set -euo pipefail
 IFS=$'\n\t'
 
 cd /opt/workbench/
-pip install . > /dev/null
+pip install --disable-pip-version-check . > /dev/null

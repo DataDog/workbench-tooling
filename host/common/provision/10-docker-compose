@@ -2,11 +2,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# Install docker compose from the binary distribution
-# See https://docs.docker.com/compose/install/#alternative-install-options
+# Install docker compose from pip
 
-curl -sL https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose > /dev/null 2>&1
-chmod +x /usr/local/bin/docker-compose
+pip install --system --disable-pip-version-check docker-compose > /dev/null
 
 # Install bash completion file
 
