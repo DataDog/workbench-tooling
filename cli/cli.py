@@ -1,16 +1,14 @@
 import os
-import json
 import sys
 import subprocess
 import errno
 import click
-
 import helper
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='WORKBENCH')
 
-class Context(object):
 
+class Context(object):
     def __init__(self):
         self.verbose = False
         self.home = os.getcwd()
@@ -59,8 +57,6 @@ class Context(object):
         self.vlog(cmd)
         subprocess.check_call(cmd, shell=True)
 
-pass_context = click.make_pass_decorator(Context, ensure=True)
-cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
 
 class ComplexCLI(click.MultiCommand):
 
@@ -82,9 +78,13 @@ class ComplexCLI(click.MultiCommand):
             raise
         return mod.cli
 
+
+pass_context = click.make_pass_decorator(Context, ensure=True)
+cmd_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), 'commands'))
+
+
 @click.command(cls=ComplexCLI)
-@click.option('-v', '--verbose', is_flag=True,
-                      help='Enables verbose mode.')
+@click.option('-v', '--verbose', is_flag=True, help='Enables verbose mode.')
 @pass_context
 def cli(ctx, verbose):
     """ main CLI for workbench """

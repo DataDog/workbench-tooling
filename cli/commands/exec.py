@@ -1,6 +1,6 @@
 import click
-import os
 from cli.cli import pass_context
+
 
 @click.command('exec', short_help='exec in a running container')
 @click.argument('container_id', nargs=1)

@@ -1,7 +1,6 @@
 import click
-
-from cli import helper
 from cli.cli import pass_context
+
 
 @click.command('ls', short_help='list available recipes')
 @click.argument('recipes',nargs=-1)
@@ -17,7 +16,7 @@ def cli(ctx, recipes, long_display):
     def show_recipes(manifest):
         click.echo(manifest["name"])
         for flavor_name, flavor in manifest["flavors"].iteritems():
-            click.echo('  ' + flavor_name+ ':  ' + flavor["description"])
+            click.echo('  ' + flavor_name + ':  ' + flavor["description"])
             for option_name, option in flavor.get("options", {}).iteritems():
                 click.echo('    ' + option_name + "s: " + str(option["values"]))
 

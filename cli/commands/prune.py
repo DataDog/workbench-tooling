@@ -1,6 +1,5 @@
 import click
 from cli.cli import pass_context
-from cli import state
 
 
 @click.command('prune', short_help='Prune docker')

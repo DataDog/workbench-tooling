@@ -13,7 +13,7 @@ from cli import setting
 def cli(ctx, recipe_name, flavor_name, filters):
     search = {}
     for f in filters:
-        if not "=" in f:
+        if "=" not in f:
             ctx.fail("'%s' should be set to a filter format 'key=value'" % f)
         k, v = f.split("=", 1)
         search[k] = v
@@ -51,15 +51,15 @@ def cli(ctx, recipe_name, flavor_name, filters):
                 if value:
                     env[name] = value
 
-            for option, value in  search.iteritems():
+            for option, value in search.iteritems():
                 if option in flavor.get('options', {}):
-                    if not value in flavor['options'][option]['values']:
+                    if value not in flavor['options'][option]['values']:
                         ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
                     env[option] = value
                 else:
                     ctx.fail("option '%s' does not exist in recipe %s" % (option, recipe_id))
 
-            env_string = ' '.join(['='.join([k,v]) for k, v in env.iteritems()])
+            env_string = ' '.join(['='.join([key, val]) for key, val in env.iteritems()])
             docker_compose_file = os.path.join(manifest_path, flavor['compose_file'])
 
             cmd = "%s docker-compose -f %s up -d" % (env_string, docker_compose_file)

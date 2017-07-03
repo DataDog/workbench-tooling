@@ -1,13 +1,13 @@
 import os
-
 import click
-import git
 import yaml
 
 from cli.cli import pass_context
 
+
 def check_not_void(value):
-    return((isinstance(value, dict) or isinstance(value, list) ) and len(value) > 0)
+    return((isinstance(value, dict) or isinstance(value, list)) and len(value) > 0)
+
 
 def check_auto_conf(file_name, conf):
     checks_ok = True
@@ -30,6 +30,7 @@ def check_auto_conf(file_name, conf):
             checks_ok = False
     return(checks_ok)
 
+
 def check_manifest(file_name, conf):
     checks_ok = True
     if "name" not in conf:
@@ -44,12 +45,12 @@ def check_manifest(file_name, conf):
             checks_ok = False
     return(checks_ok)
 
-@click.command('lint', short_help='Check the syntax of workbench-recipes YAMLs')
 
+@click.command('lint', short_help='Check the syntax of workbench-recipes YAMLs')
 @pass_context
 def cli(ctx):
     """
-    Check yaml syntax in files imported from recipes repository 
+    Check yaml syntax in files imported from recipes repository
     """
     path = ctx.recipes_dir
     checks_ok = True

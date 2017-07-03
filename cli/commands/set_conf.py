@@ -1,5 +1,4 @@
 import click
-import json
 from cli.cli import pass_context
 from cli import setting
 

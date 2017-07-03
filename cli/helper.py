@@ -5,6 +5,7 @@ import json
 import shutil
 import click
 
+
 # File management
 def read_yamls(path, endswith=".yaml"):
     """Read recursively all yaml files in directory path and returns a dictionnary"""
@@ -26,6 +27,7 @@ def read_yamls(path, endswith=".yaml"):
     except os.error as err:
         click.echo("ERROR while listing integrations: {0}:".format(err))
     return yamls
+
 
 def update_auto_confs(ctx):
     """
@@ -52,6 +54,7 @@ def generate_cache(ctx):
     except Exception as e:
         ctx.fail("ERROR writing cache file {0}".format(e))
 
+
 def load_cache(ctx):
     if not os.path.exists(ctx.cache_file):
         generate_cache(ctx)
@@ -61,4 +64,3 @@ def load_cache(ctx):
         return(recipes_cache)
     except Exception as e:
         ctx.fail("ERROR while loading cache {0}".format(e))
-

@@ -1,5 +1,4 @@
 import click
-import os
 from cli.cli import pass_context
 from cli import state
 

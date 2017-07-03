@@ -7,7 +7,7 @@ from cli import state
 @pass_context
 def cli(ctx):
     s = state.get(ctx)
-    if s == None or len(s['running']) == 0:
+    if s is None or len(s['running']) == 0:
         ctx.fail("No recipes are running")
 
     for recipe_id, info in s['running'].iteritems():
