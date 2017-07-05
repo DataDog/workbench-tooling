@@ -15,9 +15,13 @@ def cli(ctx, recipes):
     def show_recipes(manifest):
         click.echo(manifest["name"])
         for flavor_name, flavor in manifest["flavors"].iteritems():
-            click.echo('  ' + flavor_name + ':  ' + flavor["description"])
+            click.echo('  %s:  %s' % (flavor_name, flavor["description"]))
             for option_name, option in flavor.get("options", {}).iteritems():
-                click.echo('    ' + option_name + "s: " + str(option["values"]))
+                click.echo("    %s:" % option_name)
+                if option.get("values"):
+                    click.echo("        possible values: %s" % ' | '.join(option["values"]))
+                if option.get("default"):
+                    click.echo("        default:  %s" % option["default"])
 
     # list all recipes
     if not recipes:
