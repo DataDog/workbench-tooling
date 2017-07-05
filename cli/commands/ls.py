@@ -4,9 +4,8 @@ from cli.cli import pass_context
 
 @click.command('ls', short_help='list available recipes')
 @click.argument('recipes',nargs=-1)
-@click.option('-l', '--long_display', is_flag=True, help='Show option for every recipe')
 @pass_context
-def cli(ctx, recipes, long_display):
+def cli(ctx, recipes):
     """
     List available recipes
     - If no argument: list all recipes
@@ -23,10 +22,7 @@ def cli(ctx, recipes, long_display):
     # list all recipes
     if not recipes:
         for path, manifest in ctx.recipes_cache.iteritems():
-            if long_display:
-                show_recipes(manifest)
-            else:
-                click.echo(manifest["name"])
+            show_recipes(manifest)
         return
 
     # list only specified recipes
