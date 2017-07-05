@@ -51,9 +51,10 @@ def cli(ctx, recipe_name, flavor_name, filters):
                 if value:
                     env[name] = value
 
+            flavor_options = flavor.get('options', {})
             for option, value in search.iteritems():
-                if option in flavor.get('options', {}):
-                    if value not in flavor['options'][option]['values']:
+                if option in flavor_options:
+                    if flavor_options[option].get('values') and value not in flavor_options[option]['values']:
                         ctx.fail("option '%s' does not offer value %s in recipe %s" % (option, value, recipe_id))
                     env[option] = value
                 else:
