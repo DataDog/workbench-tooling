@@ -15,7 +15,7 @@ This umbrella project includes:
   - [standard Vagrant hosts](host/) for fast ramp-up
 
 We chose to go with docker and docker-compose for several reasons:
-  - containers allow fast and clean install and removal of software for development / testing purpoes
+  - containers allow fast and clean install and removal of software for development / testing purpose
   - as more and more software projects provide official docker images, we can base our work on these images to reduce
    our maintenance effort
   - relying on the [autodiscovery](http://docs.datadoghq.com/guides/autodiscovery/) feature of the Datadog Agent
@@ -37,3 +37,34 @@ As we bootstraped this project during a hackathlon, it now needs some more love 
 You can either:
   - use one of our [standard Vagrant hosts](host/)
   - directly [run the cli](cli/) on a Linux host
+
+## Settings
+
+**Workbench** allow you to configure it's behavior using the `set_conf` command.
+
+### Agent API key
+
+You can set the Agent API key used by some containers (depending on their manifest, see `settings` section).
+
+```
+$> workbench set_conf dd_api_key 123456789
+$> workbench list_conf
+dd_api_key: 123456789
+
+```
+
+### Custom recipes location
+
+By default the `update` command will clone
+[recipes](https://github.com/DataDog/workbench-recipes) locally and pull the
+latest changes from **master**. You can overwrite that localtion to use a local
+clone (for development purpose). If you do so **workbench** will skip the `git
+pull` part of the update command and only update its recipes cache.
+
+```
+$> workbench set_conf dev_recipes_path ~/dev/workbench-recipes
+local workbench-recipes set (/home/user/dev/workbench-recipes): skipping 'git pull'
+Generating recipes cache...
+$> workbench list_conf
+dev_recipes_path: /home/user/dev/workbench-recipes
+```

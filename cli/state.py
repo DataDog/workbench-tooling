@@ -1,4 +1,14 @@
+import os
 import json
+
+
+def init_context(ctx):
+    ctx.state_file = os.path.join(ctx.local_config, "state.json")
+
+    # for now we initialize every internal file here
+    if not os.path.exists(ctx.state_file):
+        with open(ctx.state_file, "w") as f:
+            f.write('{"running": {}}')
 
 def get(ctx):
     with open(ctx.state_file, 'r') as f:
