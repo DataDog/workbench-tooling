@@ -15,8 +15,8 @@ class Context(object):
         self.verbose = False
         self.home = os.getcwd()
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
-        self.conf_d_dir = os.path.join(self.local_config, "conf.d")
-        self.auto_conf_dir = os.path.join(self.conf_d_dir, "auto_conf")
+        self.conf_d_path = os.path.join(self.local_config, "conf.d")
+        self.auto_conf_dir = os.path.join(self.conf_d_path, "auto_conf")
 
         try:
             os.makedirs(self.auto_conf_dir)

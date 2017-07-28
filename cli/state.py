@@ -1,6 +1,8 @@
 import os
 import json
 
+import click
+
 
 def init_context(ctx):
     ctx.state_file = os.path.join(ctx.local_config, "state.json")
@@ -49,3 +51,10 @@ def is_running(ctx, recipe_id):
     if not state:
         return False
     return recipe_id in state.get('running', {})
+
+def display(ctx):
+    click.echo("State file: %s\n" % ctx.state_file)
+    s = get(ctx)
+    click.echo("Running recipes:")
+    for name, info in s['running'].iteritems():
+        click.echo("%s:\n\toption: %s" % (name, info['options']))

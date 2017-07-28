@@ -56,10 +56,11 @@ dd_api_key: 123456789
 ### Custom recipes location
 
 By default the `update` command will clone
-[recipes](https://github.com/DataDog/workbench-recipes) locally and pull the
-latest changes from **master**. You can overwrite that localtion to use a local
-clone (for development purpose). If you do so **workbench** will skip the `git
-pull` part of the update command and only update its recipes cache.
+[recipes](https://github.com/DataDog/workbench-recipes) locally
+(`~/.local/share/DataDog/workbench-recipes/`) and pull the latest changes from
+**master**. You can overwrite that localtion to use a local clone (for
+development purpose). If you do so **workbench** will skip the `git pull` part
+of the update command and only update its recipes cache and auto_conf templates.
 
 ```
 $> workbench set_conf dev_recipes_path ~/dev/workbench-recipes

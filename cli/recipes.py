@@ -118,3 +118,6 @@ def read_yamls(path, endswith=".yaml"):
         click.echo("ERROR while listing integrations: {0}:".format(err))
     return yamls
 
+def display(ctx):
+    click.echo("Recipes dir: %s" % ctx.recipes_dir)
+    click.echo("Dev recipes dir activated: %s" % ctx.is_custom_recipes_dir)

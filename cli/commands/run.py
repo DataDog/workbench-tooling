@@ -40,11 +40,6 @@ def cli(ctx, recipe_name, flavor_name, filters):
 
             for name, required in flavor.get('settings', {}).iteritems():
 
-                # hack: we should merge ctx info and setting somehow
-                if name == 'conf_d_path':
-                    env['conf_d_path'] = ctx.conf_d_dir
-                    continue
-
                 if name not in settings and required:
                     ctx.fail("Error setting '%s' is required to run %s. See command 'set_conf'." % (name, recipe_id))
                 value = settings.get(name)
