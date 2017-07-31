@@ -10,6 +10,8 @@ import state
 
 
 DEV_RECIPE_PATH = "dev_recipes_path"
+MANIFEST_FILENAME = "manifest.yaml"
+AUTOCONF_FOLDER_NAME = "auto_conf"
 
 def init_context(ctx):
     ctx.base_recipes_dir = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog", "workbench-recipes")
@@ -79,7 +81,7 @@ def update_auto_confs(ctx):
         auto_conf_dir will be mount in the agent container and use by AutoConf.
     """
     for root, dirs, files in os.walk(ctx.recipes_dir):
-        if root.endswith("auto_conf"):
+        if root.endswith(AUTOCONF_FOLDER_NAME):
             ctx.vlog("found auto_conf dir: %s" % root)
             for f in files:
                 ctx.vlog("importing auto_conf: %s" % f)
@@ -89,7 +91,7 @@ def generate_cache(ctx):
     """Generate integration cache from yamls"""
     click.echo("Generating recipes cache...")
     try:
-        data = read_yamls(ctx.recipes_dir, "manifest.yaml")
+        data = read_yamls(ctx.recipes_dir, MANIFEST_FILENAME)
     except Exception as e:
         ctx.fail("ERROR writing cache file: {0}".format(e))
         return

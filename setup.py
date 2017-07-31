@@ -7,8 +7,10 @@ setup(
     include_package_data=True,
     install_requires=[
         'click',
+        'colorama',
         'GitPython',
         'pyyaml',
+        'Cerberus',
     ],
     entry_points='''
         [console_scripts]
