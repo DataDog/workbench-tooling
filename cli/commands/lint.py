@@ -37,7 +37,10 @@ MANIFEST_SCHEMA = {
                     'type': 'dict',
                     'keyschema': {'type': 'string', 'regex': '\S+'},
                     'valueschema': {'type': 'string', 'allowed': ['required', 'optional']},
-                }
+                },
+                'dev_mode': {
+                    'type': 'boolean',
+                },
             },
         }
     }
@@ -231,7 +234,7 @@ def cli(ctx, folders, quick):
     manifest_validator = ManifestValidator(recursive=True, ctx=ctx, quick=quick)
     autoconf_validator = AutoConfValidator(ctx=ctx)
 
-    folders = folders or [ctx.recipes_dir]
+    folders = folders or [ctx.recipes.recipes_dir]
     for folder in folders:
         for path, _, files in os.walk(folder):
             for name in files:

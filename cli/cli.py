@@ -3,9 +3,10 @@ import sys
 import subprocess
 import errno
 import click
-import recipes
-import state
-import setting
+from recipes import Recipes
+from state import State
+from setting import Setting
+from dev_mode import DevMode
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='WORKBENCH')
 
@@ -15,6 +16,7 @@ class Context(object):
         self.verbose = False
         self.home = os.getcwd()
         self.local_config = os.path.join(os.path.expanduser("~"), ".config", "DataDog", "workbench")
+        self.local_data = os.path.join(os.path.expanduser("~"), ".local", "share", "DataDog")
         self.conf_d_path = os.path.join(self.local_config, "conf.d")
         self.auto_conf_dir = os.path.join(self.conf_d_path, "auto_conf")
 
@@ -25,9 +27,10 @@ class Context(object):
                 raise
             pass
 
-        setting.init_context(self)
-        state.init_context(self)
-        recipes.init_context(self)
+        self.setting = Setting(self)
+        self.state = State(self)
+        self.recipes = Recipes(self)
+        self.dev_mode = DevMode(self)
 
     def vlog(self, msg):
         if self.verbose:
@@ -57,9 +60,8 @@ class ComplexCLI(click.MultiCommand):
             if sys.version_info[0] == 2:
                 name = name.encode('ascii', 'replace')
             mod = __import__('cli.commands.' + name, None, None, ['cli'])
-        except ImportError as e:
-            print "Error loading %s: %s" % (name, e)
-            raise
+        except ImportError:
+            return
         return mod.cli
 
 

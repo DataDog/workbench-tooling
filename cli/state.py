@@ -4,57 +4,61 @@ import json
 import click
 
 
-def init_context(ctx):
-    ctx.state_file = os.path.join(ctx.local_config, "state.json")
+class State(object):
+    def __init__(self, ctx):
+        self.ctx = ctx
+        self.state_file = os.path.join(ctx.local_config, "state.json")
 
-    # for now we initialize every internal file here
-    if not os.path.exists(ctx.state_file):
-        with open(ctx.state_file, "w") as f:
-            f.write('{"running": {}}')
+        # for now we initialize every internal file here
+        if not os.path.exists(self.state_file):
+            with open(self.state_file, "w") as f:
+                f.write('{}')
+                self.running = {}
+        else:
+            with open(self.state_file, 'r') as f:
+                try:
+                    self.running = json.load(f)
+                except ValueError:
+                    ctx.vlog("Error while loading internal state: reseting it")
+                    self.running = {}
+                    self.__save()
 
-def get(ctx):
-    with open(ctx.state_file, 'r') as f:
-        try:
-            return json.load(f)
-        except ValueError:
-            ctx.vlog("Error while loading internal state: reseting it")
-            return {'running': {}}
+    def get(self, key):
+        return self.running.get(key)
 
-def add_running_compose(ctx, recipe_id, compose_file, options):
-    entry = {'compose_file': compose_file, 'options': options}
+    def add_running(self, recipe_id, compose_file, options):
+        self.running[recipe_id] = {'compose_file': compose_file, 'options': options}
+        self.__save()
 
-    data = get(ctx)
-    with open(ctx.state_file, 'w+') as f:
-        f.truncate()
-        if 'running' not in data:
-            data['running'] = {}
-        data['running'][recipe_id] = entry
-        json.dump(data, f)
+    def remove_running(self, recipe_id):
+        del self.running[recipe_id]
+        self.__save()
 
-def remove_running_compose(ctx, recipe_id):
-    with open(ctx.state_file, 'r+') as f:
-        try:
-            data = json.load(f)
-        except ValueError:
-            return
+    def __save(self):
+        with open(self.state_file, 'w+') as f:
+            f.truncate()
+            json.dump(self.running, f)
 
-        if 'running' not in data:
-            return
-        del data['running'][recipe_id]
+    def is_running(self, recipe_id):
+        return recipe_id in self.running
 
-        f.seek(0)
-        f.truncate()
-        json.dump(data, f)
+    def is_any_running(self):
+        return bool(self.running)
 
-def is_running(ctx, recipe_id):
-    state = get(ctx)
-    if not state:
-        return False
-    return recipe_id in state.get('running', {})
+    def display(self):
+        click.echo("State file: %s\n" % self.state_file)
+        click.echo("Running recipes:")
+        for name, info in self.running.iteritems():
+            click.echo("%s:\n\toption: %s" % (name, info['options']))
 
-def display(ctx):
-    click.echo("State file: %s\n" % ctx.state_file)
-    s = get(ctx)
-    click.echo("Running recipes:")
-    for name, info in s['running'].iteritems():
-        click.echo("%s:\n\toption: %s" % (name, info['options']))
+    def stop(self, recipe_ids):
+        for recipe_id in recipe_ids:
+            info = self.get(recipe_id)
+            if not info:
+                raise Exception("%s is not running" % recipe_id)
+
+            self.ctx.sh("%s docker-compose -f %s down -v" % (info['options'], info['compose_file']))
+            self.remove_running(recipe_id)
+
+    def stop_all(self):
+        self.stop(self.running.keys())

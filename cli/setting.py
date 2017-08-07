@@ -1,40 +1,50 @@
 import json
 import os
 import click
-
 import recipes
 
 
-def init_context(ctx):
-    ctx.setting_file = os.path.join(ctx.local_config, "setting.json")
-    if not os.path.exists(ctx.setting_file):
-        ctx.setting = {"conf_d_path": ctx.conf_d_path}
-        with open(ctx.setting_file, "w") as f:
-            json.dump(ctx.setting, f)
-    else:
-        ctx.setting = get(ctx)
+class Setting(object):
+    def __init__(self, ctx):
+        self.ctx = ctx
+        self.setting_file = os.path.join(ctx.local_config, "setting.json")
+        if not os.path.exists(self.setting_file):
+            self.data = {"conf_d_path": ctx.conf_d_path}
+            with open(self.setting_file, "w+") as f:
+                json.dump(self.data, f)
+        else:
+            with open(self.setting_file, 'r') as f:
+                self.data = json.load(f)
 
-def set(ctx, key, value):
-    ctx.setting[key] = value
-    if key == recipes.DEV_RECIPE_PATH:
-        recipes.refresh_context(ctx)
-        recipes.update(ctx)
+    def set(self, key, value):
+        self.data[key] = value
+        if key == recipes.DEV_RECIPE_PATH:
+            if self.ctx.state.is_any_running():
+                raise Exception("Some recipes are running, please stop them before running an update")
 
-    with open(ctx.setting_file, 'r+') as f:
-        data = json.load(f)
-        f.seek(0)
-        f.truncate()
-        data[key] = value
-        json.dump(data, f)
+            self.ctx.recipes.update()
+        self.save()
 
+    def remove(self, key):
+        if key in self.data:
+            self.data.pop(key)
+            if key == recipes.DEV_RECIPE_PATH:
+                if self.ctx.state.is_any_running():
+                    raise Exception("Some recipes are running, please stop them before running an update")
+                self.ctx.recipes.update()
+            self.save()
 
-def get(ctx):
-    with open(ctx.setting_file, 'r') as f:
-        return json.load(f)
+    def save(self):
+        with open(self.setting_file, 'r+') as f:
+            f.truncate()
+            json.dump(self.data, f)
 
-def display(ctx):
-    click.echo("Setting file: %s\n" % ctx.setting_file)
+    def get(self, key, default=None):
+        return self.data.get(key, default)
 
-    click.echo("Settings:")
-    for k, v in get(ctx).iteritems():
-        click.echo("- %s: %s" % (k, v))
+    def display(self):
+        click.echo("Setting file: %s\n" % self.setting_file)
+
+        click.echo("Settings:")
+        for k, v in self.data.iteritems():
+            click.echo("- %s: %s" % (k, v))
