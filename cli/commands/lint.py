@@ -113,6 +113,7 @@ class YAMLValidator(Validator):
             self._config['path'] = folder
             with open(os.path.join(folder, filename)) as stream:
                 contents = yaml.load(stream)
+                self.document_path = tuple([filename])
                 return self.validate(contents)
         except DocumentError as e:
             self._error("Validation error", str(e))
@@ -154,7 +155,8 @@ class ManifestValidator(YAMLValidator):
         elif self._config['recursive']:
             valid = self._config['compose_validator'].validate_file(self._config['path'], value)
             if not valid:
-                self._error("%s syntax" % field, str(self._config['compose_validator'].errors))
+                self._error(field, "Invalid compose file %s, see errors below:" % value)
+                self._error(self._config['compose_validator']._errors)
 
 
 class ComposeValidator(YAMLValidator):
@@ -239,7 +241,7 @@ def cli(ctx, folders, quick):
                         linted_ok[0] += 1
                     else:
                         click.secho("%s/%s: NOK" % (path, name), fg='red')
-                        click.echo(manifest_validator.errors)
+                        print_errors(None, manifest_validator.errors)
                         click.echo(" ")
                         linted_nok[0] += 1
 
@@ -260,3 +262,22 @@ def cli(ctx, folders, quick):
         click.echo("%s manifests and %s auto_conf templates are valid" % tuple(linted_ok))
         click.secho("%s manifests and %s auto_conf templates are invalid" % tuple(linted_nok), fg='red')
         raise click.Abort  # return error code for CI
+
+
+def print_errors(prefix, errors):
+    if isinstance(errors, list):
+        for child in errors:
+            print_errors(prefix, child)
+    elif isinstance(errors, dict):
+        for field, children in errors.iteritems():
+            if prefix:
+                newprefix = "%s/%s" % (prefix, field)
+            else:
+                newprefix = field
+            print_errors(newprefix, children)
+    elif isinstance(errors, basestring):
+        click.echo(prefix)
+        for line in errors.splitlines():
+            click.echo("    %s" % line)
+    else:
+        raise TypeError()
