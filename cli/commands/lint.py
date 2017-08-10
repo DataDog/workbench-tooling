@@ -1,4 +1,5 @@
 import os
+import json
 from subprocess import CalledProcessError
 
 import click
@@ -49,7 +50,16 @@ COMPOSE_SCHEMA = {
         'valueschema': {
             'type': 'dict',
             'schema': {
-                'build': {'required': False, 'find_dockerfile': True}
+                'build': {'required': False, 'find_dockerfile': True},
+                'labels': {
+                    'required': False,
+                    'type': 'dict',
+                    'schema': {
+                        'com.datadoghq.ad.check_names': {'required': False, 'json_type': 'list'},
+                        'com.datadoghq.ad.init_configs': {'required': False, 'json_type': 'list'},
+                        'com.datadoghq.ad.instances': {'required': False, 'json_type': 'list'}
+                    }
+                }
             }
         }
     },
@@ -76,6 +86,27 @@ class YAMLValidator(Validator):
         self._config['recursive'] = kwargs.pop('recursive', True)
         self._config['quick'] = kwargs.pop('quick', False)
         self._config['ctx'] = kwargs.pop('ctx')
+
+    def _validate_json_type(self, target_type, field, value):
+        """
+        Validates whether the value is valid JSON data and its
+        root element is a list or dict.
+
+        The rule's arguments are validated against this schema:
+        {'type': 'string'}
+        """
+        if not target_type:
+            return
+
+        try:
+            contents = json.loads(value)
+        except Exception as e:
+            self._error(field, "Invalid JSON: %s" % str(e))
+        else:
+            if target_type is 'list' and not isinstance(contents, list):
+                self._error(field, "Not a JSON list")
+            if target_type is 'dict' and not isinstance(contents, dict):
+                self._error(field, "Not a JSON dict")
 
     def validate_file(self, folder, filename):
         try:
