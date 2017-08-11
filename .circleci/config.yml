@@ -1,0 +1,56 @@
+version: 2
+jobs:
+  lint:
+    working_directory: ~/workbench-tooling
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "setup.py" }}
+      - run:
+          command: |
+            python2 -m virtualenv venv
+            . venv/bin/activate
+            pip install setuptools-lint flake8
+            pip install .
+            pip uninstall -y workbench
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "setup.py" }}
+          paths:
+            - "venv"
+      - run:
+          command: |
+            . venv/bin/activate
+            python setup.py lint
+            flake8 cli
+  nosetests:
+    working_directory: ~/workbench-tooling
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "setup.py" }}
+      - run:
+          command: |
+            python2 -m virtualenv venv
+            . venv/bin/activate
+            pip install nose
+            pip install .
+            pip uninstall -y workbench
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "setup.py" }}
+          paths:
+            - "venv"
+      - run:
+          command: |
+            . venv/bin/activate
+            python setup.py nosetests
+
+workflows:
+  version: 2
+  testing:
+    jobs:
+      - lint
+      - nosetests
