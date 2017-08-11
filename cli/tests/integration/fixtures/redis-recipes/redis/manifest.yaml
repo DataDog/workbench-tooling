@@ -1,0 +1,29 @@
+name: redis
+flavors:
+  standalone:
+    description: One empty redis instance
+    compose_file: standalone.compose
+    options:
+      version:
+        description: Image version to run
+        values:
+          - "3.0"
+          - "3.0-alpine"
+          - "3.2"
+          - "3.2-alpine"
+          - "3.2-32bit"
+        default: "3.2"
+
+  1master-2slaves:
+    description: Redis cluster in 1 master - 2 slaves configuration
+    compose_file: 1m-2s.compose
+    options:
+      version:
+        description: Image version to run
+        values:
+          - "3.0"
+          - "3.0-alpine"
+          - "3.2"
+          - "3.2-alpine"
+          - "3.2-32bit"
+        default: "3.2"

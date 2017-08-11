@@ -10,6 +10,8 @@ import subprocess
 # 3rd party
 import docker
 
+FIXTURES_PATH = os.path.join(os.path.dirname(__file__), 'fixtures', 'redis-recipes')
+
 
 class TestCommands(unittest.TestCase):
     """
@@ -37,6 +39,9 @@ class TestCommands(unittest.TestCase):
     def setUp(self):
         self.assertEquals(0, len(self.docker.containers.list()), "docker has running containers")
         self.bashenv['HOME'] = tempfile.mkdtemp(prefix='workbench-tests-')
+        # Using fixtures recipes, call conf remove to go back to git
+        self._call(['workbench', 'conf', 'set', 'dev_recipes_path', FIXTURES_PATH])
+
 
     def tearDown(self):
         try:
@@ -50,7 +55,8 @@ class TestCommands(unittest.TestCase):
     def _call(self, cmd):
         return subprocess.check_output(cmd, env=self.bashenv)
 
-    def test_update(self):
+    def test_update_from_git(self):
+        self._call(['workbench', 'conf', 'remove', 'dev_recipes_path'])
         self._call(['workbench', 'recipe', 'update'])
 
         # Check we cloned from git
@@ -64,14 +70,15 @@ class TestCommands(unittest.TestCase):
         self._call(['workbench', 'recipe', 'update'])
         output = self._call(['workbench', 'recipe', 'ls'])
 
-        # Make sure listing the recipes outputs more than 20 lines
-        self.assertGreater(output.count('\n'), 20)
+        # Make sure listing the recipes outputs more than 5 lines
+        self.assertGreater(output.count('\n'), 5)
 
     def test_recipe_run(self):
         self._call(['workbench', 'recipe', 'update'])
         self._call(['workbench', 'recipe', 'run', 'redis', '1master-2slaves'])
-
         self.assertEquals(3, len(self.docker.containers.list()), "should find 3 redis containers")
+        self._call(['workbench', 'recipe', 'run', 'redis', 'standalone'])
+        self.assertEquals(4, len(self.docker.containers.list()), "should find 4 redis containers")
 
     def test_recipe_stop(self):
         self._call(['workbench', 'recipe', 'update'])
