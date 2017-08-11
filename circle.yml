@@ -1,8 +1,0 @@
-dependencies:
-  post:
-    - pip install setuptools-lint flake8
-
-test:
-  override:
-    - python setup.py lint
-    - flake8 cli
