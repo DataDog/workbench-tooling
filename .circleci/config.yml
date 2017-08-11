@@ -43,9 +43,11 @@ jobs:
           key: deps1-{{ .Branch }}-{{ checksum "setup.py" }}
           paths:
             - "venv"
+      - setup_remote_docker
       - run:
           command: |
             . venv/bin/activate
+            pip install .
             python setup.py nosetests
 
 workflows:

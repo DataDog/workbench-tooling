@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'click',
         'colorama',
+        'docker',
         'GitPython',
         'pyyaml',
         'Cerberus',

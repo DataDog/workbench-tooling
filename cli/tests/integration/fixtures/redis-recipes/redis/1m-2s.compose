@@ -1,0 +1,20 @@
+version: '2'
+services:
+  redis-master:
+    image: "redis:${version}"
+    labels:
+        com.datadoghq.sd.check.id: "redis"
+  redis-slave1:
+    image: "redis:${version}"
+    labels:
+        com.datadoghq.sd.check.id: "redis"
+    command: redis-server --slaveof redis-master 6379
+  redis-slave2:
+    image: "redis:${version}"
+    labels:
+        com.datadoghq.sd.check.id: "redis"
+    command: redis-server --slaveof redis-master 6379
+networks:
+  default:
+    external:
+      name: workbench
