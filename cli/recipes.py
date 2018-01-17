@@ -170,7 +170,7 @@ class Recipes(object):
             # create common network in any case
             try:
                 self.ctx.sh("docker network create workbench")
-            except:
+            except Exception:
                 pass
             self.ctx.sh(cmd)
             self.ctx.state.add_running(recipe_id, docker_compose_file, env_string)
