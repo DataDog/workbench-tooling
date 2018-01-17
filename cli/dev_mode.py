@@ -29,11 +29,11 @@ class DevMode(object):
 
         core = self.ctx.setting.get(INTEGRATION_CONF_KEY)
         if core:
-            check_path = os.path.join(core, integration_name, "check.py")
+            check_path = os.path.join(core, integration_name, "datadog_checks", integration_name, integration_name+".py")
             if os.path.isfile(check_path):
-                os.symlink(check_path, self.__get_integration_path(integration_name))
+                os.link(check_path, self.__get_integration_path(integration_name))
             else:
-                raise Exception("No integration name '%s' in %s" % (integration_name, core))
+                raise Exception("No integration name '%s' in %s (file not found '%s')" % (integration_name, core, check_path))
         else:
             raise Exception("Please first set the path to your local integrations repository, use: dev_mode set_repo_path")
 
