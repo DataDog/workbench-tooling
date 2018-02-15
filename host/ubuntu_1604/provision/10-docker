@@ -6,4 +6,4 @@ IFS=$'\n\t'
 
 apt-get install -y curl > /dev/null
 curl -sL https://get.docker.com | bash > /dev/null 2>&1
-adduser ubuntu docker > /dev/null 2>&1
+adduser vagrant docker > /dev/null 2>&1
