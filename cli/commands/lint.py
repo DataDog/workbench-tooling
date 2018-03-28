@@ -70,7 +70,7 @@ COMPOSE_SCHEMA = {
 }
 
 AUTOCONF_SCHEMA = {
-    'docker_images': {'type': 'list', 'required': True, 'schema': {'type': 'string'}},
+    'ad_identifiers': {'type': 'list', 'required': True, 'schema': {'type': 'string'}},
     'init_config': {'type': 'dict', 'required': True, 'nullable': True},
     'instances': {'type': 'list', 'required': True, 'nullable': True},
 }
